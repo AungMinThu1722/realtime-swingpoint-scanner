@@ -1,0 +1,4 @@
+interface:
+  display_name: "Forex Chart Scan"
+  short_description: "Scan 27 FOREXCOM pairs on daily, weekly, or monthly charts with ICT-style rules."
+  default_prompt: "Use the bundled Forex Chart Scan skill to run the 27-pair FOREXCOM scan, choose the requested timeframe, and report any Seek and Destroy or Aim For Range matches."

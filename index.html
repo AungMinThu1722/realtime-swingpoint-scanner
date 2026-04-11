@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMXM Scanner | Alpha Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top right, #1e293b, #0f172a); }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen p-4 md:p-12">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+            <div>
+                <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">
+                    MMXM <span class="text-blue-500">Scanner</span>
+                </h1>
+                <p class="text-slate-400 font-medium">Long Term Perspective (LTP) Analysis</p>
+            </div>
+            <div class="glass px-6 py-3 rounded-2xl flex items-center gap-4">
+                <div class="w-3 h-3 bg-green-500 rounded-full pulse"></div>
+                <div class="text-sm font-semibold tracking-wide uppercase">Live Status: Active</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Card -->
+        <div class="glass rounded-3xl shadow-2xl overflow-hidden border border-white/5">
+            <div class="p-6 bg-white/5 border-b border-white/10 flex justify-between items-center">
+                <h2 class="text-lg font-semibold">Market Setups</h2>
+                <span id="update-timer" class="text-xs text-slate-500 font-mono">Refreshing in 60s...</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-slate-500 text-xs uppercase tracking-widest font-bold">
+                            <th class="px-8 py-5">Currency Pair</th>
+                            <th class="px-8 py-5 text-center">Timeframe</th>
+                            <th class="px-8 py-5 text-right">Detected Pattern</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-white/5">
+                        <tr>
+                            <td colspan="3" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <p class="text-slate-400 animate-pulse">Synchronizing with JSONBin Cloud...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="mt-8 flex flex-col md:flex-row justify-between items-center gap-4 px-4">
+            <p class="text-xs text-slate-500 font-medium" id="last-updated">Last scan: --:--</p>
+            <div class="flex gap-6">
+                <span class="text-[10px] uppercase tracking-tighter text-slate-600 font-bold italic">Strategy: Vectorized ICT Logic</span>
+                <span class="text-[10px] uppercase tracking-tighter text-slate-600 font-bold italic">Source: TradingView L2</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BIN_ID = "69d9d5f9aaba882197e809b7";
+        const API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G";
+
+        async function loadData() {
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                const data = await res.json();
+                const records = data.record;
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = ""; 
+
+                if (!records || records.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-16 text-center text-slate-500">No active patterns detected in current cycle.</td></tr>`;
+                    return;
+                }
+
+                records.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-white/5 transition-colors duration-200 group";
+                    tr.innerHTML = `
+                        <td class="px-8 py-6 font-bold text-white group-hover:text-blue-400 transition-colors">${row.pair || row.Pair || '-'}</td>
+                        <td class="px-8 py-6 text-center"><span class="bg-blue-500/10 text-blue-400 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">${row.timeframe || row.Timeframe || '-'}</span></td>
+                        <td class="px-8 py-6 text-right font-semibold text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">${row.status || row.Status || row.pattern || row.Pattern || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('last-updated').innerText = "Last Database Sync: " + new Date().toLocaleTimeString();
+            } catch (error) {
+                console.error('Sync Error:', error);
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 60000);
+
+        let timeLeft = 60;
+        setInterval(() => {
+            timeLeft = timeLeft <= 1 ? 60 : timeLeft - 1;
+            document.getElementById('update-timer').innerText = `Refreshing in ${timeLeft}s...`;
+        }, 1000);
+    </script>
+</body>
+</html>
