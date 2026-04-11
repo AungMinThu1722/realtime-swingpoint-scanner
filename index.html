@@ -235,12 +235,14 @@
         }
 
         loadData();
-        setInterval(loadData, 60000);
+        setInterval(loadData, 900000); // 15 minutes
 
-        let timeLeft = 60;
+        let timeLeft = 900;
         setInterval(() => {
-            timeLeft = timeLeft <= 1 ? 60 : timeLeft - 1;
-            document.getElementById('update-timer').innerText = `${timeLeft}s`;
+            timeLeft = timeLeft <= 1 ? 900 : timeLeft - 1;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('update-timer').innerText = `${minutes}m ${seconds}s`;
         }, 1000);
     </script>
 </body>
