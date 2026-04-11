@@ -45,14 +45,16 @@ def get_scan_results(timeframe):
     return formatted_results
 
 def run_all_and_sync():
-    # Run both Daily and Weekly scans
+    # Run Daily, Weekly, and Monthly scans
     daily_results = get_scan_results("1D")
     weekly_results = get_scan_results("1W")
+    monthly_results = get_scan_results("1M")
     
     # Combined payload
     payload = {
         "1D": daily_results,
         "1W": weekly_results,
+        "1M": monthly_results,
         "updated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
     }
     

@@ -68,7 +68,7 @@
             <div class="flex gap-4 fade-in">
                 <div class="glass p-6 rounded-3xl min-w-[180px] border-l-4 border-l-accent shadow-xl shadow-accent/5">
                     <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Sync Timer</p>
-                    <p id="update-timer" class="text-2xl font-bold mono-label text-accent italic">60s</p>
+                    <p id="update-timer" class="text-2xl font-bold mono-label text-accent italic">15m 0s</p>
                 </div>
             </div>
         </header>
@@ -77,6 +77,7 @@
         <div class="flex gap-8 mb-8 border-b border-white/5 px-4 fade-in" style="animation-delay: 0.1s">
             <button id="tab-1D" onclick="switchTab('1D')" class="pb-3 text-xs font-black uppercase tracking-widest tab-active transition-all">Daily Scan</button>
             <button id="tab-1W" onclick="switchTab('1W')" class="pb-3 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-accent transition-all">Weekly Scan</button>
+            <button id="tab-1M" onclick="switchTab('1M')" class="pb-3 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-accent transition-all">Monthly Scan</button>
         </div>
 
         <!-- Feed Container -->
@@ -111,7 +112,7 @@
 
         <footer class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 px-4 opacity-50">
             <p id="last-updated" class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Syncing...</p>
-            <div class="text-[9px] font-black tracking-widest uppercase text-slate-500 italic">Alpha Build v3.2</div>
+            <div class="text-[9px] font-black tracking-widest uppercase text-slate-500 italic">Alpha Build v3.5</div>
         </footer>
     </main>
 
@@ -157,7 +158,7 @@
                     headers: { 'X-Master-Key': API_KEY }
                 });
                 const data = await res.json();
-                allData = data.record; // Expected structure: {"1D": [...], "1W": [...], "updated_at": "..."}
+                allData = data.record; 
                 
                 renderTable(currentTab);
                 
@@ -182,7 +183,10 @@
             activeBtn.classList.add('tab-active', 'text-accent');
             activeBtn.classList.remove('text-slate-500');
             
-            document.getElementById('view-title').innerText = tab === "1D" ? "Daily Signals" : "Weekly Signals";
+            let title = "Daily Signals";
+            if (tab === "1W") title = "Weekly Signals";
+            if (tab === "1M") title = "Monthly Signals";
+            document.getElementById('view-title').innerText = title;
             
             renderTable(tab);
         }
