@@ -6,18 +6,15 @@ from scan_major_fx import scan
 BIN_ID = "69d9d5f9aaba882197e809b7"
 API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G"
 
-def update_jsonbin(df):
+def update_jsonbin(data):
     """
-    Convert pandas dataframe to JSON and PUT it to JSONBin.io
+    Push a dictionary containing multiple timeframe results to JSONBin.io
     """
     url = f'https://api.jsonbin.io/v3/b/{BIN_ID}'
     headers = {
         'Content-Type': 'application/json',
         'X-Master-Key': API_KEY
     }
-    
-    # Convert DataFrame to a list of dictionaries
-    data = df.to_dict(orient="records")
     
     try:
         req = requests.put(url, json=data, headers=headers)
@@ -28,11 +25,10 @@ def update_jsonbin(df):
     except Exception as e:
         print(f"Error sending data to JSONBin: {e}")
 
-def run_and_sync(timeframe="1D"):
+def get_scan_results(timeframe):
     print(f"Running scanner for {timeframe}...")
     results = scan(timeframe=timeframe)
     
-    # Format data for the Dashboard
     formatted_results = []
     for r in results:
         active_patterns = []
@@ -40,25 +36,27 @@ def run_and_sync(timeframe="1D"):
         if r.get("aim_for_range_low"): active_patterns.append("Aim Low")
         if r.get("aim_for_range_high"): active_patterns.append("Aim High")
         
-        # Only include pairs with active signals
         if active_patterns:
             formatted_results.append({
                 "pair": r["symbol"],
                 "timeframe": timeframe,
                 "status": ", ".join(active_patterns)
             })
+    return formatted_results
+
+def run_all_and_sync():
+    # Run both Daily and Weekly scans
+    daily_results = get_scan_results("1D")
+    weekly_results = get_scan_results("1W")
     
-    if not formatted_results:
-        print("No active signals found. Updating Dashboard with empty list.")
-        df = pd.DataFrame(columns=["pair", "timeframe", "status"])
-    else:
-        df = pd.DataFrame(formatted_results)
+    # Combined payload
+    payload = {
+        "1D": daily_results,
+        "1W": weekly_results,
+        "updated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
     
-    update_jsonbin(df)
+    update_jsonbin(payload)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--timeframe", default="1D", help="1D, 1W, or 1M")
-    args = parser.parse_args()
-    
-    run_and_sync(timeframe=args.timeframe)
+    run_all_and_sync()

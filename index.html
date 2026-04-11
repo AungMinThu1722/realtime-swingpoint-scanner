@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMXM | Claude Edition</title>
+    <title>MMXM | Vision Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -29,14 +29,15 @@
         .light .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #D9770644; border-radius: 10px; }
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .mono-label { font-family: 'Geist Mono', monospace; letter-spacing: 0.05em; }
+        .tab-active { color: #D97706; border-bottom: 2px solid #D97706; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-oled text-slate-900 dark:text-slate-200 transition-colors duration-500 min-h-screen selection:bg-accent/30 font-sans">
 
-    <!-- Header / Nav -->
+    <!-- Nav -->
     <nav class="fixed top-0 w-full z-50 px-8 py-5 flex justify-between items-center glass border-b border-white/5">
         <div class="flex items-center gap-4">
             <div class="w-9 h-9 bg-accent rounded-lg flex items-center justify-center shadow-lg shadow-accent/20">
@@ -52,93 +53,74 @@
     </nav>
 
     <main class="max-w-6xl mx-auto pt-36 pb-20 px-8">
-        <!-- Hero -->
-        <header class="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
-            <div class="space-y-5 max-w-2xl fade-in">
-                <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.2em] border border-accent/20">
+        <header class="mb-12 flex flex-col md:flex-row justify-between items-end gap-10">
+            <div class="space-y-4 max-w-2xl fade-in">
+                <div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-[9px] font-black uppercase tracking-[0.2em] border border-accent/20">
                     <span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
-                    System Online
+                    Terminal Active
                 </div>
-                <h1 class="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.9]">Terminal <span class="text-accent italic font-light underline decoration-accent/30 underline-offset-8">Vision</span></h1>
-                <p class="text-slate-500 dark:text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
-                    High-frequency vectorized ICT detection protocol. Analyzing global liquidity pools with precision logic.
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tighter">Market <span class="text-accent italic font-light">Intelligence</span></h1>
+                <p class="text-slate-500 dark:text-slate-400 text-base font-medium leading-relaxed">
+                    Vectorized ICT detection protocol analyzing global liquidity pools.
                 </p>
             </div>
             
-            <div class="flex gap-4 fade-in" style="animation-delay: 0.1s">
-                <div class="glass p-8 rounded-[32px] min-w-[220px] border-l-4 border-l-accent shadow-xl shadow-accent/5">
-                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3">Sync Interval</p>
-                    <p id="update-timer" class="text-4xl font-bold mono-label text-accent italic">60s</p>
+            <div class="flex gap-4 fade-in">
+                <div class="glass p-6 rounded-3xl min-w-[180px] border-l-4 border-l-accent shadow-xl shadow-accent/5">
+                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-2">Sync Timer</p>
+                    <p id="update-timer" class="text-2xl font-bold mono-label text-accent italic">60s</p>
                 </div>
             </div>
         </header>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 fade-in" style="animation-delay: 0.2s">
-            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
-                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Basket Size</h3>
-                <p class="text-5xl font-bold tracking-tighter">27<span class="text-accent text-2xl font-light">FX</span></p>
-            </div>
-            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
-                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Algorithm</h3>
-                <p class="text-5xl font-bold tracking-tighter italic">LTP<span class="text-accent text-2xl font-light">v3</span></p>
-            </div>
-            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
-                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Security</h3>
-                <p class="text-5xl font-bold tracking-tighter">AES<span class="text-accent text-2xl font-light">256</span></p>
-            </div>
+        <!-- Tabs Navigation -->
+        <div class="flex gap-8 mb-8 border-b border-white/5 px-4 fade-in" style="animation-delay: 0.1s">
+            <button id="tab-1D" onclick="switchTab('1D')" class="pb-3 text-xs font-black uppercase tracking-widest tab-active transition-all">Daily Scan</button>
+            <button id="tab-1W" onclick="switchTab('1W')" class="pb-3 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-accent transition-all">Weekly Scan</button>
         </div>
 
-        <!-- Feed -->
-        <div class="fade-in" style="animation-delay: 0.3s">
-            <div class="glass rounded-[48px] overflow-hidden shadow-2xl">
-                <div class="px-12 py-10 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+        <!-- Feed Container -->
+        <div class="fade-in" style="animation-delay: 0.2s">
+            <div class="glass rounded-[40px] overflow-hidden shadow-2xl">
+                <div class="px-10 py-7 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
                     <div class="flex items-center gap-4">
                         <div class="w-2 h-2 bg-accent rounded-full animate-ping"></div>
-                        <h2 class="text-xl font-bold mono-label uppercase">Live Feed</h2>
+                        <h2 id="view-title" class="text-lg font-bold mono-label uppercase">Daily Signals</h2>
                     </div>
-                    <div id="status-chip" class="px-5 py-2 rounded-xl bg-accent/5 text-accent text-[9px] font-black tracking-[0.25em] uppercase border border-accent/10">
-                        Synchronizing...
+                    <div id="status-chip" class="px-4 py-1.5 rounded-xl bg-accent/5 text-accent text-[8px] font-black tracking-[0.2em] uppercase border border-accent/10">
+                        Stream Online
                     </div>
                 </div>
 
-                <div class="overflow-x-auto px-6 py-6">
+                <div class="overflow-x-auto px-4 py-4">
                     <table class="w-full">
                         <thead>
-                            <tr class="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
-                                <th class="px-10 py-8 text-left">Instrument</th>
-                                <th class="px-10 py-8 text-center">Interval</th>
-                                <th class="px-10 py-8 text-right">Pattern Signature</th>
+                            <tr class="text-slate-500 text-[9px] font-black uppercase tracking-[0.3em]">
+                                <th class="px-8 py-6 text-left">Instrument</th>
+                                <th class="px-8 py-6 text-center">Interval</th>
+                                <th class="px-8 py-6 text-right">Detection Profile</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-white/5">
-                            <tr>
-                                <td colspan="3" class="px-10 py-32 text-center">
-                                    <div class="flex flex-col items-center gap-8">
-                                        <div class="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-                                        <p class="text-slate-500 font-bold text-[10px] tracking-[0.3em] uppercase animate-pulse">Initializing Data Stream</p>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Data injected here -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 px-6 opacity-50">
-            <p id="last-updated" class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Awaiting Uplink...</p>
-            <div class="flex gap-10">
-                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500 italic">Claude Code Inspired UI</div>
-                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500 italic">2026 ALPHA BUILD</div>
-            </div>
+        <footer class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 px-4 opacity-50">
+            <p id="last-updated" class="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Syncing...</p>
+            <div class="text-[9px] font-black tracking-widest uppercase text-slate-500 italic">Alpha Build v3.2</div>
         </footer>
     </main>
 
     <script>
         const BIN_ID = "69d9d5f9aaba882197e809b7";
         const API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G";
+
+        let allData = {};
+        let currentTab = "1D";
 
         function toggleTheme() {
             const html = document.documentElement;
@@ -175,56 +157,81 @@
                     headers: { 'X-Master-Key': API_KEY }
                 });
                 const data = await res.json();
-                const records = data.record;
-                const tbody = document.getElementById('table-body');
+                allData = data.record; // Expected structure: {"1D": [...], "1W": [...], "updated_at": "..."}
                 
-                tbody.innerHTML = ""; 
-
-                if (!records || records.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="px-10 py-24 text-center text-slate-500 font-black text-xs tracking-widest uppercase">No Active Signatures Detected</td></tr>`;
-                } else {
-                    records.forEach((row, index) => {
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-accent/[0.03] transition-all duration-300 group border-white/5";
-                        tr.style.opacity = "0";
-                        tr.style.transform = "translateY(6px)";
-                        
-                        tr.innerHTML = `
-                            <td class="px-12 py-9">
-                                <div class="flex items-center gap-5">
-                                    <div class="w-1 h-1 bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all rounded-full"></div>
-                                    <span class="text-2xl font-bold mono-label group-hover:text-accent transition-colors tracking-tighter">${row.pair || row.Pair || '-'}</span>
-                                </div>
-                            </td>
-                            <td class="px-10 py-9 text-center">
-                                <span class="bg-accent/5 border border-accent/10 text-accent text-[9px] px-5 py-2 rounded-lg font-black uppercase tracking-[0.25em] italic">
-                                    ${row.timeframe || row.Timeframe || '-'}
-                                </span>
-                            </td>
-                            <td class="px-12 py-9 text-right">
-                                <div class="flex flex-col items-end">
-                                    <span class="text-accent text-base font-bold italic tracking-tight group-hover:text-white transition-all uppercase">
-                                        ${row.status || row.Status || row.pattern || row.Pattern || '-'}
-                                    </span>
-                                    <span class="text-[8px] text-slate-500 font-black mt-1 uppercase tracking-widest">Signal Verified</span>
-                                </div>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                        
-                        setTimeout(() => {
-                            tr.style.opacity = "1";
-                            tr.style.transform = "translateY(0)";
-                        }, 40 * index);
-                    });
+                renderTable(currentTab);
+                
+                if (allData.updated_at) {
+                    document.getElementById('last-updated').innerText = "Last Sync: " + allData.updated_at;
                 }
-
-                document.getElementById('last-updated').innerText = "Last Database Sync: " + new Date().toLocaleTimeString();
-                chip.innerText = "Stream Active";
+                chip.innerText = "Stream Online";
             } catch (error) {
                 console.error('Sync Error:', error);
                 chip.innerText = "Sync Failed";
             }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // UI Updates
+            document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.classList.remove('tab-active', 'text-accent'));
+            document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.classList.add('text-slate-500'));
+            
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.add('tab-active', 'text-accent');
+            activeBtn.classList.remove('text-slate-500');
+            
+            document.getElementById('view-title').innerText = tab === "1D" ? "Daily Signals" : "Weekly Signals";
+            
+            renderTable(tab);
+        }
+
+        function renderTable(tab) {
+            const tbody = document.getElementById('table-body');
+            const records = allData[tab] || [];
+            
+            tbody.innerHTML = ""; 
+
+            if (records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-10 py-24 text-center text-slate-500 font-bold text-[10px] tracking-widest uppercase">Neutral Market: No ${tab} Patterns</td></tr>`;
+                return;
+            }
+
+            records.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-accent/[0.03] transition-all duration-300 group border-white/5";
+                tr.style.opacity = "0";
+                tr.style.transform = "translateY(6px)";
+                
+                tr.innerHTML = `
+                    <td class="px-8 py-7">
+                        <div class="flex items-center gap-5">
+                            <div class="w-1 h-1 bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all rounded-full"></div>
+                            <span class="text-xl font-bold mono-label group-hover:text-accent transition-colors tracking-tighter">${row.pair || '-'}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-7 text-center">
+                        <span class="bg-accent/5 border border-accent/10 text-accent text-[8px] px-4 py-1.5 rounded-lg font-black uppercase tracking-[0.2em]">
+                            ${row.timeframe || '-'}
+                        </span>
+                    </td>
+                    <td class="px-8 py-7 text-right">
+                        <div class="flex flex-col items-end">
+                            <span class="text-accent text-sm font-bold italic tracking-tight uppercase">
+                                ${row.status || '-'}
+                            </span>
+                            <span class="text-[7px] text-slate-500 font-black mt-1 uppercase tracking-widest italic">Institutional Pulse</span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                
+                setTimeout(() => {
+                    tr.style.opacity = "1";
+                    tr.style.transform = "translateY(0)";
+                }, 40 * index);
+            });
         }
 
         loadData();
