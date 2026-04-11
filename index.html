@@ -3,120 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MMXM Alpha | Vision Dashboard</title>
+    <title>MMXM | Claude Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    fontFamily: { 
+                        sans: ['Geist', 'sans-serif'],
+                        mono: ['Geist Mono', 'monospace']
+                    },
                     colors: {
                         oled: '#000000',
-                        accent: '#3b82f6',
-                        'accent-dark': '#2563eb'
+                        accent: '#D97706', // Claude Orange
+                        'accent-dark': '#B45309'
                     }
                 }
             }
         }
     </script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .light .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 0, 0, 0.05); }
-        .tab-active { position: relative; }
-        .tab-active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: #3b82f6; border-radius: 2px; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #3b82f644; border-radius: 10px; }
-        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #D9770644; border-radius: 10px; }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .mono-label { font-family: 'Geist Mono', monospace; letter-spacing: 0.05em; }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-oled text-slate-900 dark:text-slate-100 transition-colors duration-500 ease-in-out min-h-screen selection:bg-accent/30">
+<body class="bg-slate-50 dark:bg-oled text-slate-900 dark:text-slate-200 transition-colors duration-500 min-h-screen selection:bg-accent/30 font-sans">
 
-    <!-- Theme Switcher & Nav -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center glass border-b border-white/5">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-lg shadow-accent/20">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+    <!-- Header / Nav -->
+    <nav class="fixed top-0 w-full z-50 px-8 py-5 flex justify-between items-center glass border-b border-white/5">
+        <div class="flex items-center gap-4">
+            <div class="w-9 h-9 bg-accent rounded-lg flex items-center justify-center shadow-lg shadow-accent/20">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </div>
-            <span class="text-xl font-bold tracking-tight">MMXM <span class="text-accent">Vision</span></span>
+            <span class="text-xl font-bold tracking-tight mono-label uppercase">MMXM <span class="text-accent">Scanner</span></span>
         </div>
         
-        <button onclick="toggleTheme()" class="p-3 rounded-2xl glass hover:scale-110 transition-all duration-300 group">
-            <svg id="sun-icon" class="hidden w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
-            <svg id="moon-icon" class="w-5 h-5 text-slate-400 group-hover:text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+        <button onclick="toggleTheme()" class="p-2.5 rounded-xl glass hover:bg-accent/10 transition-all duration-300 group">
+            <svg id="sun-icon" class="hidden w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+            <svg id="moon-icon" class="w-5 h-5 text-slate-500 group-hover:text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
         </button>
     </nav>
 
-    <main class="max-w-7xl mx-auto pt-32 pb-20 px-6">
-        <!-- Hero Section -->
-        <header class="mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
-            <div class="space-y-4 max-w-2xl fade-in">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider">
-                    <span class="w-2 h-2 bg-accent rounded-full animate-ping"></span>
-                    Live Market Intelligence
+    <main class="max-w-6xl mx-auto pt-36 pb-20 px-8">
+        <!-- Hero -->
+        <header class="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
+            <div class="space-y-5 max-w-2xl fade-in">
+                <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-accent/10 text-accent text-[10px] font-black uppercase tracking-[0.2em] border border-accent/20">
+                    <span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+                    System Online
                 </div>
-                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight">Advanced <span class="bg-clip-text text-transparent bg-gradient-to-r from-accent to-indigo-500">LTP Analytics</span></h1>
-                <p class="text-slate-500 dark:text-slate-400 text-lg font-medium leading-relaxed">
-                    Vectorized ICT scanning protocol delivering institutional-grade liquidity analysis across the major FX basket.
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.9]">Terminal <span class="text-accent italic font-light underline decoration-accent/30 underline-offset-8">Vision</span></h1>
+                <p class="text-slate-500 dark:text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
+                    High-frequency vectorized ICT detection protocol. Analyzing global liquidity pools with precision logic.
                 </p>
             </div>
             
             <div class="flex gap-4 fade-in" style="animation-delay: 0.1s">
-                <div class="glass p-6 rounded-3xl min-w-[200px] hover:border-accent/30 transition-all cursor-default">
-                    <p class="text-slate-500 text-xs font-bold uppercase mb-2">Next Sweep</p>
-                    <p id="update-timer" class="text-3xl font-bold font-mono text-accent">60s</p>
+                <div class="glass p-8 rounded-[32px] min-w-[220px] border-l-4 border-l-accent shadow-xl shadow-accent/5">
+                    <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3">Sync Interval</p>
+                    <p id="update-timer" class="text-4xl font-bold mono-label text-accent italic">60s</p>
                 </div>
             </div>
         </header>
 
-        <!-- Stats Grid (Optional placeholder for future data) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in" style="animation-delay: 0.2s">
-            <div class="glass p-8 rounded-[40px] relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
-                <h3 class="text-slate-500 text-sm font-bold uppercase mb-4">Market Coverage</h3>
-                <p class="text-4xl font-extrabold">27 Pairs</p>
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 fade-in" style="animation-delay: 0.2s">
+            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
+                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Basket Size</h3>
+                <p class="text-5xl font-bold tracking-tighter">27<span class="text-accent text-2xl font-light">FX</span></p>
             </div>
-            <div class="glass p-8 rounded-[40px] relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
-                <h3 class="text-slate-500 text-sm font-bold uppercase mb-4">Strategy</h3>
-                <p class="text-4xl font-extrabold">ICT Core</p>
+            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
+                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Algorithm</h3>
+                <p class="text-5xl font-bold tracking-tighter italic">LTP<span class="text-accent text-2xl font-light">v3</span></p>
             </div>
-            <div class="glass p-8 rounded-[40px] relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
-                <h3 class="text-slate-500 text-sm font-bold uppercase mb-4">Resolution</h3>
-                <p class="text-4xl font-extrabold">Daily</p>
+            <div class="glass p-10 rounded-[40px] group transition-all duration-500 hover:border-accent/20">
+                <h3 class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-5">Security</h3>
+                <p class="text-5xl font-bold tracking-tighter">AES<span class="text-accent text-2xl font-light">256</span></p>
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Feed -->
         <div class="fade-in" style="animation-delay: 0.3s">
-            <div class="glass rounded-[40px] overflow-hidden shadow-2xl shadow-accent/5">
-                <div class="px-10 py-8 border-b border-white/5 flex justify-between items-center bg-white/5">
-                    <h2 class="text-xl font-bold">Signal Feed</h2>
-                    <div id="status-chip" class="px-4 py-1.5 rounded-2xl bg-emerald-500/10 text-emerald-500 text-[10px] font-extrabold tracking-widest uppercase">
-                        Real-time Data Active
+            <div class="glass rounded-[48px] overflow-hidden shadow-2xl">
+                <div class="px-12 py-10 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-2 h-2 bg-accent rounded-full animate-ping"></div>
+                        <h2 class="text-xl font-bold mono-label uppercase">Live Feed</h2>
+                    </div>
+                    <div id="status-chip" class="px-5 py-2 rounded-xl bg-accent/5 text-accent text-[9px] font-black tracking-[0.25em] uppercase border border-accent/10">
+                        Synchronizing...
                     </div>
                 </div>
 
-                <div class="overflow-x-auto p-4">
+                <div class="overflow-x-auto px-6 py-6">
                     <table class="w-full">
                         <thead>
-                            <tr class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                                <th class="px-8 py-6">Instrument</th>
-                                <th class="px-8 py-6 text-center">Horizon</th>
-                                <th class="px-8 py-6 text-right">Detection Profile</th>
+                            <tr class="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+                                <th class="px-10 py-8 text-left">Instrument</th>
+                                <th class="px-10 py-8 text-center">Interval</th>
+                                <th class="px-10 py-8 text-right">Pattern Signature</th>
                             </tr>
                         </thead>
                         <tbody id="table-body" class="divide-y divide-white/5">
                             <tr>
-                                <td colspan="3" class="px-8 py-24 text-center">
-                                    <div class="flex flex-col items-center gap-6">
-                                        <div class="w-12 h-12 border-[3px] border-accent border-t-transparent rounded-full animate-spin"></div>
-                                        <p class="text-slate-500 font-bold text-sm tracking-widest uppercase animate-pulse">Establishing Secure Stream...</p>
+                                <td colspan="3" class="px-10 py-32 text-center">
+                                    <div class="flex flex-col items-center gap-8">
+                                        <div class="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+                                        <p class="text-slate-500 font-bold text-[10px] tracking-[0.3em] uppercase animate-pulse">Initializing Data Stream</p>
                                     </div>
                                 </td>
                             </tr>
@@ -127,13 +127,11 @@
         </div>
 
         <!-- Footer -->
-        <footer class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 px-6">
-            <div class="flex items-center gap-6">
-                <p id="last-updated" class="text-xs font-bold text-slate-500 uppercase tracking-widest">Awaiting Initial Sync...</p>
-            </div>
-            <div class="flex gap-8 opacity-40 hover:opacity-100 transition-opacity">
-                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500">Node Cluster: Primary</div>
-                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500">API Health: 100%</div>
+        <footer class="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10 px-6 opacity-50">
+            <p id="last-updated" class="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Awaiting Uplink...</p>
+            <div class="flex gap-10">
+                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500 italic">Claude Code Inspired UI</div>
+                <div class="text-[10px] font-black tracking-widest uppercase text-slate-500 italic">2026 ALPHA BUILD</div>
             </div>
         </footer>
     </main>
@@ -142,7 +140,6 @@
         const BIN_ID = "69d9d5f9aaba882197e809b7";
         const API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G";
 
-        // Theme Management
         function toggleTheme() {
             const html = document.documentElement;
             const moon = document.getElementById('moon-icon');
@@ -163,7 +160,6 @@
             }
         }
 
-        // Apply saved theme
         if (localStorage.theme === 'light') {
             document.documentElement.classList.remove('dark');
             document.documentElement.classList.add('light');
@@ -171,14 +167,10 @@
             document.getElementById('sun-icon').classList.remove('hidden');
         }
 
-        // Data Fetching
         async function loadData() {
             const chip = document.getElementById('status-chip');
             try {
-                chip.innerText = "Syncing Data...";
-                chip.classList.replace('text-emerald-500', 'text-accent');
-                chip.classList.replace('bg-emerald-500/10', 'bg-accent/10');
-
+                chip.innerText = "Syncing...";
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                     headers: { 'X-Master-Key': API_KEY }
                 });
@@ -186,59 +178,52 @@
                 const records = data.record;
                 const tbody = document.getElementById('table-body');
                 
-                // Entrance animation simulation
                 tbody.innerHTML = ""; 
 
                 if (!records || records.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-500 font-bold uppercase tracking-widest">Neutral Market: No Patterns Detected</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="3" class="px-10 py-24 text-center text-slate-500 font-black text-xs tracking-widest uppercase">No Active Signatures Detected</td></tr>`;
                 } else {
                     records.forEach((row, index) => {
                         const tr = document.createElement('tr');
-                        tr.className = "hover:bg-accent/5 transition-all duration-300 group cursor-default border-white/5";
+                        tr.className = "hover:bg-accent/[0.03] transition-all duration-300 group border-white/5";
                         tr.style.opacity = "0";
-                        tr.style.transform = "translateY(10px)";
+                        tr.style.transform = "translateY(6px)";
                         
                         tr.innerHTML = `
-                            <td class="px-10 py-8">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-1.5 h-1.5 bg-accent rounded-full group-hover:scale-150 transition-transform"></div>
-                                    <span class="text-xl font-bold group-hover:text-accent transition-colors">${row.pair || row.Pair || '-'}</span>
+                            <td class="px-12 py-9">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-1 h-1 bg-accent/40 group-hover:bg-accent group-hover:scale-150 transition-all rounded-full"></div>
+                                    <span class="text-2xl font-bold mono-label group-hover:text-accent transition-colors tracking-tighter">${row.pair || row.Pair || '-'}</span>
                                 </div>
                             </td>
-                            <td class="px-8 py-8 text-center">
-                                <span class="bg-accent/5 border border-accent/10 text-accent text-[9px] px-4 py-1.5 rounded-xl font-black uppercase tracking-[0.2em]">
+                            <td class="px-10 py-9 text-center">
+                                <span class="bg-accent/5 border border-accent/10 text-accent text-[9px] px-5 py-2 rounded-lg font-black uppercase tracking-[0.25em] italic">
                                     ${row.timeframe || row.Timeframe || '-'}
                                 </span>
                             </td>
-                            <td class="px-10 py-8 text-right">
+                            <td class="px-12 py-9 text-right">
                                 <div class="flex flex-col items-end">
-                                    <span class="text-emerald-500 text-sm font-black uppercase tracking-widest group-hover:drop-shadow-[0_0_12px_rgba(16,185,129,0.4)] transition-all">
+                                    <span class="text-accent text-base font-bold italic tracking-tight group-hover:text-white transition-all uppercase">
                                         ${row.status || row.Status || row.pattern || row.Pattern || '-'}
                                     </span>
-                                    <span class="text-[8px] text-slate-500 font-bold mt-1 uppercase">Institutional Bias</span>
+                                    <span class="text-[8px] text-slate-500 font-black mt-1 uppercase tracking-widest">Signal Verified</span>
                                 </div>
                             </td>
                         `;
                         tbody.appendChild(tr);
                         
-                        // Staggered entrance
                         setTimeout(() => {
                             tr.style.opacity = "1";
                             tr.style.transform = "translateY(0)";
-                        }, 50 * index);
+                        }, 40 * index);
                     });
                 }
 
                 document.getElementById('last-updated').innerText = "Last Database Sync: " + new Date().toLocaleTimeString();
-                
-                chip.innerText = "Real-time Data Active";
-                chip.classList.replace('text-accent', 'text-emerald-500');
-                chip.classList.replace('bg-accent/10', 'bg-emerald-500/10');
+                chip.innerText = "Stream Active";
             } catch (error) {
                 console.error('Sync Error:', error);
                 chip.innerText = "Sync Failed";
-                chip.classList.replace('text-emerald-500', 'text-red-500');
-                chip.classList.replace('bg-emerald-500/10', 'bg-red-500/10');
             }
         }
 
