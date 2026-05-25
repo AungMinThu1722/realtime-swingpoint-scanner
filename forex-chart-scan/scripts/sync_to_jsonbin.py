@@ -9,8 +9,8 @@ from scan_major_fx import scan
 GIST_ID = "9d1d74c2c9b868f2c6c0653b43c344dc"
 # Token priority: env var GIST_TOKEN → env var GITHUB_TOKEN → fallback PAT (local dev)
 GIST_TOKEN = (
-    os.environ.get("GIST_TOKEN")
-    or os.environ.get("GITHUB_TOKEN")
+    os.environ.get("GIST_TOKEN", "")
+    or os.environ.get("GITHUB_TOKEN", "")
 )
 
 if not GIST_TOKEN:
@@ -18,6 +18,9 @@ if not GIST_TOKEN:
         "❌ GIST_TOKEN not found! Set the GIST_TOKEN environment variable "
         "or create a GIST_TOKEN secret in your GitHub repo settings."
     )
+
+# Strip whitespace/newlines from the token (GitHub Secrets sometimes add trailing newlines)
+GIST_TOKEN = GIST_TOKEN.strip()
 
 GIST_FILENAME = "scanner_data.json"
 GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}"

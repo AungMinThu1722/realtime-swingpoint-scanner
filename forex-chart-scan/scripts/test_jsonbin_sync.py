@@ -5,9 +5,14 @@ import requests
 
 GIST_ID = "9d1d74c2c9b868f2c6c0653b43c344dc"
 GIST_TOKEN = (
-    os.environ.get("GIST_TOKEN")
-    or os.environ.get("GITHUB_TOKEN")
+    os.environ.get("GIST_TOKEN", "")
+    or os.environ.get("GITHUB_TOKEN", "")
 ) or None
+
+# Strip whitespace/newlines (GitHub Secrets sometimes add trailing newlines)
+if GIST_TOKEN:
+    GIST_TOKEN = GIST_TOKEN.strip()
+
 GIST_FILENAME = "scanner_data.json"
 GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}"
 
