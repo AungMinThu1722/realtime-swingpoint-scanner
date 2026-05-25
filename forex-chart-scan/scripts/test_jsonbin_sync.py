@@ -1,36 +1,55 @@
-import pandas as pd
+"""Quick test to verify GitHub Gist integration is working."""
+import json
+import os
 import requests
 
-BIN_ID = "69d9d5f9aaba882197e809b7"
-API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G"
+GIST_ID = "9d1d74c2c9b868f2c6c0653b43c344dc"
+GIST_TOKEN = (
+    os.environ.get("GIST_TOKEN")
+    or os.environ.get("GITHUB_TOKEN")
+) or None
+GIST_FILENAME = "scanner_data.json"
+GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}"
 
-def update_jsonbin(df):
-    url = f'https://api.jsonbin.io/v3/b/{BIN_ID}'
+
+def update_gist(data):
     headers = {
-        'Content-Type': 'application/json',
-        'X-Master-Key': API_KEY
+        "Authorization": f"token {GIST_TOKEN}",
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
     }
-    data = df.to_dict(orient="records")
+    payload = {
+        "files": {
+            GIST_FILENAME: {
+                "content": json.dumps(data, indent=2)
+            }
+        }
+    }
     try:
-        req = requests.put(url, json=data, headers=headers)
+        req = requests.patch(GIST_API_URL, json=payload, headers=headers)
         if req.status_code == 200:
-            print("Successfully updated scanner data to Dashboard (JSONBin)!")
-            print("Response:", req.json().get("metadata", {}))
+            print("✅ Test data synced to GitHub Gist!")
+            print(f"   API Response: updated_at={req.json().get('updated_at', 'N/A')}")
         else:
-            print(f"Failed to update. Status Code: {req.status_code}, Response: {req.text}")
+            print(f"❌ Failed. Status: {req.status_code}, Response: {req.text}")
     except Exception as e:
-        print(f"Error sending data to JSONBin: {e}")
+        print(f"❌ Error: {e}")
+
 
 if __name__ == "__main__":
-    # Create example data
     example_data = [
         {"pair": "EURUSD", "timeframe": "1D", "status": "Seek & Destroy, Aim Low"},
         {"pair": "GBPUSD", "timeframe": "1D", "status": "Aim High"},
         {"pair": "AUDJPY", "timeframe": "1W", "status": "Seek & Destroy"},
-        {"pair": "TEST-SUCCESS", "timeframe": "NOW", "status": "Integration Working!"}
+        {"pair": "TEST-SUCCESS", "timeframe": "NOW", "status": "Gist Integration Working!"}
     ]
-    
-    df = pd.DataFrame(example_data)
-    print("Testing JSONBin integration with example data...")
-    print(df)
-    update_jsonbin(df)
+
+    payload = {
+        "1D": example_data,
+        "1W": [],
+        "1M": [],
+        "updated_at": "TEST-RUN"
+    }
+
+    print("Testing GitHub Gist integration with example data...")
+    update_gist(payload)

@@ -117,8 +117,7 @@
     </main>
 
     <script>
-        const BIN_ID = "69d9d5f9aaba882197e809b7";
-        const API_KEY = "$2a$10$BxfPEZZ3z3.3Cz6dvMCtxeR19LBBAzGJGO5q7MI.kHV5IlFx/sb/G";
+        const GIST_ID = "9d1d74c2c9b868f2c6c0653b43c344dc";
 
         let allData = {};
         let currentTab = "1D";
@@ -154,11 +153,11 @@
             const chip = document.getElementById('status-chip');
             try {
                 chip.innerText = "Syncing...";
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': API_KEY }
+                const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+                    headers: { 'Accept': 'application/vnd.github+json' }
                 });
                 const data = await res.json();
-                allData = data.record; 
+                allData = JSON.parse(data.files['scanner_data.json'].content);
                 
                 renderTable(currentTab);
                 
