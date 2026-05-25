@@ -11,7 +11,13 @@ GIST_ID = "9d1d74c2c9b868f2c6c0653b43c344dc"
 GIST_TOKEN = (
     os.environ.get("GIST_TOKEN")
     or os.environ.get("GITHUB_TOKEN")
-) or None
+)
+
+if not GIST_TOKEN:
+    raise ValueError(
+        "❌ GIST_TOKEN not found! Set the GIST_TOKEN environment variable "
+        "or create a GIST_TOKEN secret in your GitHub repo settings."
+    )
 
 GIST_FILENAME = "scanner_data.json"
 GIST_API_URL = f"https://api.github.com/gists/{GIST_ID}"
