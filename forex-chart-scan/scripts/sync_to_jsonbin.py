@@ -72,10 +72,23 @@ def get_scan_results(timeframe):
 
 def run_all_and_sync():
     print("🔄 Running MMXM scanner...")
+
+    # Step 1: Send a heartbeat to Gist so we can verify the pipeline works
+    heartbeat = {
+        "1D": [],
+        "1W": [],
+        "1M": [],
+        "updated_at": f"Scanning... {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    }
+    print("  Sending heartbeat to Gist...")
+    update_gist(heartbeat)
+
+    # Step 2: Run the scanner
     daily_results = get_scan_results("1D")
     weekly_results = get_scan_results("1W")
     monthly_results = get_scan_results("1M")
 
+    # Step 3: Update with real results
     payload = {
         "1D": daily_results,
         "1W": weekly_results,
