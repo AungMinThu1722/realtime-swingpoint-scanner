@@ -2,7 +2,7 @@ name: Daily MMXM Scan
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Runs every 15 minutes
+    - cron: '0 */4 * * *'   # Runs every 4 hours
   workflow_dispatch:      # Allows manual trigger from GitHub UI
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
           pip install pandas requests
           pip install git+https://github.com/rongardF/tvdatafeed.git
 
-      - name: Run Scanner and Sync to JSONBin
+      - name: Run Scanner and Sync to Gist
         env:
           PYTHONPATH: ${{ github.workspace }}/forex-chart-scan
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
