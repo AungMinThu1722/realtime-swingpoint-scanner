@@ -153,7 +153,7 @@
             const chip = document.getElementById('status-chip');
             try {
                 chip.innerText = "Syncing...";
-                const res = await fetch(`https://gist.githubusercontent.com/raw/${GIST_ID}/`);
+                const res = await fetch('/api/gist');
                 allData = await res.json();
                 
                 renderTable(currentTab);
