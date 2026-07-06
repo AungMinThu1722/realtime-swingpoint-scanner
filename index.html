@@ -153,11 +153,8 @@
             const chip = document.getElementById('status-chip');
             try {
                 chip.innerText = "Syncing...";
-                const res = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    headers: { 'Accept': 'application/vnd.github+json' }
-                });
-                const data = await res.json();
-                allData = JSON.parse(data.files['scanner_data.json'].content);
+                const res = await fetch(`https://gist.githubusercontent.com/raw/${GIST_ID}/`);
+                allData = await res.json();
                 
                 renderTable(currentTab);
                 
