@@ -28,4 +28,4 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/forex-chart-scan
           GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
         run: |
-          python forex-chart-scan/scripts/sync_to_jsonbin.py --timeframe 1D
+          python forex-chart-scan/scripts/sync_to_jsonbin.py

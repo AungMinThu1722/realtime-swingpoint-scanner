@@ -1,0 +1,22 @@
+name: Keepalive (prevent 60-day disable)
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # 1st of every month
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keepalive commit (reset 60-day inactivity timer)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          date > .keepalive
+          git add .keepalive
+          git commit -m "chore: keepalive $(date -u +%Y-%m-%d)" || echo "no changes"
+          git push
